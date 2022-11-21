@@ -1,49 +1,44 @@
-from enum import Enum
+# from enum import Enum
 
 #fast api modules
 # from fastapi import FastAPI
 from fastapi import FastAPI, File, UploadFile
 
 
-#tensorflow module
+#tensorflow lite module
 import tflite_runtime.interpreter as tflite
-from tensorflow.keras.applications.xception import preprocess_input
-from tensorflow.keras.preprocessing.image import load_img
 
+#   other image processing
+from PIL import Image
+from keras_image_helper import create_preprocessor
 # other modules
 import numpy as np 
-# from keras_image_helper import create_preprocessor
-# import tflite_runtime.interpreter as tflite
+from io import BytesIO
 
-class ModelName(str, Enum):
-    alexnet = "alexnet"
-    resnet = "resnet"
-    lenet = "lenet"
+
+
 
 
 app = FastAPI()
 
 
-@app.get("/models/{model_name}")
-async def get_model(model_name: ModelName):
-    if model_name is ModelName.alexnet:
-        return {"model_name": model_name, "message": "Deep Learning FTW!"}
 
-    if model_name.value == "lenet":
-        return {"model_name": model_name, "message": "LeCNN all the images"}
+def preprocess(file):
 
-    return {"model_name": model_name, "message": "Have some residuals"}
+    # a = BasePreprocessor.convert_to_tensor()
+    #   reading image daata
+    img = file.file.read()
+    
+    #   mimicing os file support behaviour for bytes stream 
+    stream = BytesIO(img)
+    
 
+    img = Image.open(stream)
 
+    # creating preprocessor for Xception
+    preprocessor = create_preprocessor('xception', target_size=(299, 299))  
+    X = preprocessor.from_loaded_image(img)
 
-
-def preprocess(img):
-
-    # fullname = "t-shirt.png"
-    # img = load_img(fullname, target_size=(299, 299))
-    X = np.array(img)
-    X = preprocess_input(X)
-    X = np.array([X])
 
     return X
 
@@ -68,12 +63,6 @@ def model(X):
     return preds
 
 
-# def prediction(interpreter):
-#     interpreter,output_index = interpreter
-#     preds = interpreter.get_tensor(output_index) 
-#     return preds
-    
-
     
     
 def decode(preds):
@@ -90,6 +79,9 @@ def decode(preds):
     't-shirt'
     ]
     results = dict(zip(labels, preds[0]))
+    
+    
+    # Maximum value of dictionary (highest probability)
     max_value = max(results, key=results.get)
 
     return max_value
@@ -101,7 +93,7 @@ async def create_upload_file(file: UploadFile):
 
 
 @app.post("/")
-async def get_prediction(file: UploadFile):
+async def get_prediction_root(file: UploadFile = File(...)):
     prep = preprocess(file)
     preds = model(prep)
     # preds = prediction(interpreter)
