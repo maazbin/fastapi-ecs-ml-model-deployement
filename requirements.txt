@@ -1,0 +1,13 @@
+fastapi==0.87.0
+
+keras-image-helper==0.0.1
+
+
+numpy==1.23.5
+Pillow==9.3.0
+
+python-multipart==0.0.5
+
+tflite-runtime==2.10.0
+
+uvicorn==0.20.0
