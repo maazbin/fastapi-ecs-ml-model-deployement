@@ -1,0 +1,14 @@
+fastapi==0.87.0
+
+# keras-image-helper==0.0.1
+# git+https://github.com/maazbin/keras-image-helper.git
+
+tensorflow==2.11.0
+numpy==1.23.5
+Pillow==9.3.0
+
+python-multipart==0.0.5
+
+tflite-runtime==2.10.0
+
+uvicorn==0.20.0

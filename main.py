@@ -10,7 +10,8 @@ import tflite_runtime.interpreter as tflite
 
 #   other image processing
 from PIL import Image
-from keras_image_helper import create_preprocessor
+from tensorflow.keras.applications.xception import preprocess_input
+
 # other modules
 import numpy as np 
 from io import BytesIO
@@ -25,8 +26,6 @@ app = FastAPI()
 
 def preprocess(file):
 
-    # a = BasePreprocessor.convert_to_tensor()
-    #   reading image daata
     img = file.file.read()
     
     #   mimicing os file support behaviour for bytes stream 
@@ -34,11 +33,14 @@ def preprocess(file):
     
 
     img = Image.open(stream)
+    
+    #to np array
+    x = np.array(img)
+    # adding one more dim
+    X = np.array([x])
 
-    # creating preprocessor for Xception
-    preprocessor = create_preprocessor('xception', target_size=(299, 299))  
-    X = preprocessor.from_loaded_image(img)
-
+    # preprocessor for Xception
+    X = preprocess_input(X)
 
     return X
 
