@@ -17,5 +17,4 @@ COPY clothing-model-v4.tflite clothing-model-v4.tflite
 COPY main.py main.py
 
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
-
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
