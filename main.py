@@ -105,3 +105,30 @@ async def get_prediction_root(file: UploadFile = File(...)):
     # preds = prediction(interpreter)
     decode_pred = decode(preds)
     return {"prediction" : decode_pred}
+
+
+#health check for alb
+
+@app.get("/health")
+async def get_health_check():
+    
+    return {"health status": "Good !"}
+
+
+#health check for alb
+
+@app.get("/labels")
+async def get_lables():
+    labels = [
+    'dress',
+    'hat',
+    'longsleeve',
+    'outwear',
+    'pants',
+    'shirt',
+    'shoes',
+    'shorts',
+    'skirt',
+    't-shirt'
+    ]
+    return {"labels": labels}
